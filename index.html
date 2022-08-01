@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ensemble</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@900&family=Fira+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="/js/vendor/autocomplete.js"></script>
+    <script src="/js/games.js"></script>
+    <script src="/js/films.js"></script>
+    <script src="/js/app.js"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L8S1JR65Y7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-L8S1JR65Y7');
+    </script>
+
+</head>
+<body>
+
+<style>
+    body {
+        font-family: 'Fira Sans', sans-serif;
+    }
+
+    .container {
+        max-width: 24rem;
+    }
+
+    header {
+        margin-top: 2rem;
+    }
+
+    h1 {
+        font-family: 'Arima Madurai', sans-serif;
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 3rem;
+    }
+
+    .help {
+        cursor: pointer;
+    }
+
+    #counter {
+        margin-top: 0.8rem;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.4rem;
+    }
+
+    #actors {
+        margin-top: 1.2rem;
+    }
+
+    #films {
+        margin-top: 2rem;
+    }
+
+    #actors li, #films li {
+        background: #fafafd;
+    }
+
+    .fade-out {
+        background-image: linear-gradient(to bottom, transparent, white);
+        margin-top: -3rem;
+        height: 3rem;
+        z-index: 10;
+    }
+
+    #win .card-body:first-child {
+        text-align: center;
+    }
+
+    #win-counter {
+        font-weight: bold;
+    }
+
+    .guess-info {
+        min-width: 3rem;
+    }
+
+    .solution {
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="container" style="padding-bottom: 5rem;">
+    <header class="d-flex justify-content-between align-items-center">
+        <div><i class="fa-solid fa-circle"></i></div>
+        <h1>Ensemble</h1>
+        <div class="help" data-bs-toggle="modal" data-bs-target="#help"><i class="fa-solid fa-circle-question"></i></div>
+    </header>
+
+    <form id="form">
+        <input type="text" class="form-control" placeholder="Guess a film" autocomplete="off">
+    </form>
+
+    <div id="counter">
+        <span id="counter-current" style="display: none;">0</span> / <span id="counter-target" style="display: none;">0</span>
+    </div>
+
+    <div id="win" class="card" style="display: none;">
+        <div class="card-body">
+            <p class="card-text">
+                You completed the ensemble with <span id="win-counter">0</span> film<span id="win-plural">s</span>!
+            </p>
+            <p id="win-miss" class="card-text" style="margin-top: 1rem; display: none;">
+                But you could have done it in <span id="win-target">0</span>...
+            </p>
+            <a href="#" target="_blank" id="twitter-share" class="btn btn-sm btn-outline-dark" style="margin-bottom: 1em;">
+                Share on Twitter
+            </a>
+            <p class="card-text" style="font-size: 0.9em; font-weight: 300;">
+                The next ensemble will take the stage in <span id="time-to-next" style="font-variant: tabular-nums;">00:00:00</span>
+            </p>
+        </div>
+        <div id="solutions" class="card-body" style="border-top: 1px solid rgba(0, 0, 0, 0.1); font-size: 0.9rem; background: #fafafd;">
+            <h2 style="font-size: 0.9rem; text-align: center; font-weight: bold;">Valid Solutions</h2>
+        </div>
+    </div>
+
+    <ul id="actors" class="list-group">
+        <li class="actor list-group-item d-flex justify-content-between align-items-center">
+            <span class="actor-name">&nbsp;</span>
+            <div class="d-flex justify-content-between align-items-center" style="width: 3rem;">
+                <span class="counter badge bg-dark rounded-pill" style="display: none;">0</span>
+                <i class="fa-solid fa-check" style="display: none;"></i>
+            </div>
+        </li>
+        <li class="actor list-group-item d-flex justify-content-between align-items-center">
+            <span class="actor-name">&nbsp;</span>
+            <div class="d-flex justify-content-between align-items-center" style="width: 3rem;">
+                <span class="counter badge bg-dark rounded-pill" style="display: none;">0</span>
+                <i class="fa-solid fa-check" style="display: none;"></i>
+            </div>
+        </li>
+        <li class="actor list-group-item d-flex justify-content-between align-items-center">
+            <span class="actor-name">&nbsp;</span>
+            <div class="d-flex justify-content-between align-items-center" style="width: 3rem;">
+                <span class="counter badge bg-dark rounded-pill" style="display: none;">0</span>
+                <i class="fa-solid fa-check" style="display: none;"></i>
+            </div>
+        </li>
+        <li class="actor list-group-item d-flex justify-content-between align-items-center">
+            <span class="actor-name">&nbsp;</span>
+            <div class="d-flex justify-content-between align-items-center" style="width: 3rem;">
+                <span class="counter badge bg-dark rounded-pill" style="display: none;">0</span>
+                <i class="fa-solid fa-check" style="display: none;"></i>
+            </div>
+        </li>
+        <li class="actor list-group-item d-flex justify-content-between align-items-center">
+            <span class="actor-name">&nbsp;</span>
+            <div class="d-flex justify-content-between align-items-center" style="width: 3rem;">
+                <span class="counter badge bg-dark rounded-pill" style="display: none;">0</span>
+                <i class="fa-solid fa-check" style="display: none;"></i>
+            </div>
+        </li>
+        <li class="actor list-group-item d-flex justify-content-between align-items-center">
+            <span class="actor-name">&nbsp;</span>
+            <div class="d-flex justify-content-between align-items-center" style="width: 3rem;">
+                <span class="counter badge bg-dark rounded-pill" style="display: none;">0</span>
+                <i class="fa-solid fa-check" style="display: none;"></i>
+            </div>
+        </li>
+    </ul>
+
+    <ol id="films" class="list-group list-group-numbered">
+        <li class="list-group-item d-flex justify-content-between align-items-top">
+            <div class="title ms-2 me-auto">&nbsp;</div>
+            <div class="guess-info d-flex justify-content-between align-items-center">
+                <span class="counter"></span>
+                <i class="fa-regular fa-circle"></i>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-top">
+            <div class="title ms-2 me-auto">&nbsp;</div>
+            <div class="guess-info d-flex justify-content-between align-items-center">
+                <span class="counter"></span>
+                <i class="fa-regular fa-circle"></i>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-top">
+            <div class="title ms-2 me-auto">&nbsp;</div>
+            <div class="guess-info d-flex justify-content-between align-items-center">
+                <span class="counter"></span>
+                <i class="fa-regular fa-circle"></i>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-top">
+            <div class="title ms-2 me-auto">&nbsp;</div>
+            <div class="guess-info d-flex justify-content-between align-items-center">
+                <span class="counter"></span>
+                <i class="fa-regular fa-circle"></i>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-top">
+            <div class="title ms-2 me-auto">&nbsp;</div>
+            <div class="guess-info d-flex justify-content-between align-items-center">
+                <span class="counter"></span>
+                <i class="fa-regular fa-circle"></i>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-top">
+            <div class="title ms-2 me-auto">&nbsp;</div>
+            <div class="guess-info d-flex justify-content-between align-items-center">
+                <span class="counter"></span>
+                <i class="fa-regular fa-circle"></i>
+            </div>
+        </li>
+        <div class="fade-out">&nbsp;</div>
+    </ol>
+</div>
+
+<div class="modal fade" id="help" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">How to Play 'Ensemble'</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You have been presented with an ensemble of six actors. Your goal is to name at least one film in which each of these actors appears. The fewer films named, the better.</p>
+                <p>The counter shows the number of films you have named so far and the minimum possible number of films for the given ensemble.</p>
+                <p>There is no limit on the number of films you can guess.</p>
+                <p>A new ensemble will be cast every day.</p>
+            </div>
+            <div class="modal-footer">
+                <div style="font-size: 0.75rem;">Ensemble v1.0</div>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
