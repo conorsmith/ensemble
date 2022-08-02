@@ -167,7 +167,7 @@ class Clock {
     isInTheFuture(ymdDate) {
         const date = new Date();
         date.setUTCFullYear(ymdDate.split("-")[0]);
-        date.setUTCMonth(ymdDate.split("-")[1]);
+        date.setUTCMonth(ymdDate.split("-")[1] - 1);
         date.setUTCDate(ymdDate.split("-")[2]);
         return date > this.now;
     }
