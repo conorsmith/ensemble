@@ -143,6 +143,13 @@ class Clock {
         this.now = new Date();
     }
 
+    asYmd(date) {
+        return date.getUTCFullYear()
+            + "-" + (date.getUTCMonth() + 1).toString().padStart(2, "0")
+            + "-" + date.getUTCDate().toString().padStart(2, "0");
+    }
+
+
     todayAsYmd() {
         return this.now.getUTCFullYear()
             + "-" + (this.now.getUTCMonth() + 1).toString().padStart(2, "0")
@@ -169,7 +176,38 @@ class Clock {
         date.setUTCFullYear(ymdDate.split("-")[0]);
         date.setUTCMonth(ymdDate.split("-")[1] - 1);
         date.setUTCDate(ymdDate.split("-")[2]);
-        return date > this.now;
+
+        date.setUTCHours(0, 0, 0, 0);
+
+        return date >= this.now;
+    }
+
+    createDateFromYmd(ymdDate) {
+        const date = new Date();
+        date.setUTCFullYear(ymdDate.split("-")[0]);
+        date.setUTCMonth(parseInt(ymdDate.split("-")[1], 10) - 1);
+        date.setUTCDate(ymdDate.split("-")[2]);
+
+        return date;
+    }
+
+    getMonthName(date) {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        return monthNames[date.getUTCMonth()] + " " + date.getUTCFullYear();
+    }
+
+    getFirstDayOfTheMonth(date) {
+        date.setUTCDate(1);
+
+        return date.getUTCDay();
+    }
+
+    getNumberOfDaysInMonth(date) {
+        date.setUTCMonth(date.getUTCMonth() + 1);
+        date.setUTCDate(0);
+
+        return date.getDate();
     }
 }
 
@@ -184,7 +222,7 @@ class GameRepository {
     }
 
     find(date) {
-        if (date === "") {
+        if (date === null) {
             return this.today();
         }
 
@@ -243,6 +281,25 @@ class ActorRepository {
 
     findActorsInFilms(filmIds) {
         return this.actors.filter(actor => filmIds.every(filmId => actor.isInFilm(filmId)));
+    }
+}
+
+class GameSelector {
+    constructor(clock, date) {
+        this.clock = clock;
+        this.date = date;
+    }
+
+    lastMonth() {
+        const date = this.clock.createDateFromYmd(this.date);
+        date.setUTCMonth(date.getUTCMonth() - 1);
+        this.date = this.clock.asYmd(date);
+    }
+
+    nextMonth() {
+        const date = this.clock.createDateFromYmd(this.date);
+        date.setUTCMonth(date.getUTCMonth() + 1);
+        this.date = this.clock.asYmd(date);
     }
 }
 
@@ -306,6 +363,26 @@ document.addEventListener('DOMContentLoaded', function(event) {
             index + 1
         );
     });
+
+    renderPastGameSelector(gameSelector.date);
+
+    document.getElementById("last-month").onclick = function (e) {
+        e.preventDefault();
+        if (!e.currentTarget.classList.contains("interactive-icon")) {
+            return;
+        }
+        gameSelector.lastMonth();
+        renderPastGameSelector(gameSelector.date);
+    }
+
+    document.getElementById("next-month").onclick = function (e) {
+        e.preventDefault();
+        if (!e.currentTarget.classList.contains("interactive-icon")) {
+            return;
+        }
+        gameSelector.nextMonth();
+        renderPastGameSelector(gameSelector.date);
+    }
 });
 
 function clearStorage() {
@@ -319,7 +396,8 @@ const gamesRepo = new GameRepository(
     gamesData.map(data => new Game(data.date, data.actors, data.solutions)),
     clock
 );
-const game = gamesRepo.find(window.location.search.substring(1));
+const game = gamesRepo.find((new URLSearchParams(window.location.search)).get("date"));
+const gameSelector = new GameSelector(clock, game.date);
 
 function guess(guessedFilmId) {
     if (game.hasGuess(guessedFilmId)) {
@@ -486,4 +564,84 @@ function renderGuessedFilms(film, actorCount, guessIndex) {
     }
 
     filmsEl.querySelectorAll(".title")[guessIndex - 1].innerHTML = film.title + " <span class=\"fw-light\">(" + film.year + ")</span>";
+}
+
+function renderPastGameSelector(date) {
+    date = clock.createDateFromYmd(date);
+
+    const dateOfFirstGame = new Date(2022, 7, 1);
+
+    const pastGameSelectorEl = document.getElementById("past");
+
+    pastGameSelectorEl.querySelector("h6").innerText = clock.getMonthName(date);
+
+    const lastMonth = new Date(date.getTime());
+    lastMonth.setUTCMonth(lastMonth.getUTCMonth() - 1);
+    lastMonth.setUTCDate(1);
+    if (lastMonth < dateOfFirstGame) {
+        pastGameSelectorEl.querySelector("#last-month").classList.remove("interactive-icon")
+        pastGameSelectorEl.querySelector("#last-month").innerHTML
+            = "<i class=\"fa-regular fa-fw fa-circle\"></i>";
+    } else {
+        pastGameSelectorEl.querySelector("#last-month").classList.add("interactive-icon")
+        pastGameSelectorEl.querySelector("#last-month").innerHTML
+            = "<i class=\"fa-solid fa-fw fa-circle-arrow-left\"></i>";
+    }
+
+    const nextMonth = new Date(date.getTime());
+    nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
+    nextMonth.setUTCDate(1);
+    if (clock.isInTheFuture(clock.asYmd(nextMonth))) {
+        pastGameSelectorEl.querySelector("#next-month").classList.remove("interactive-icon")
+        pastGameSelectorEl.querySelector("#next-month").innerHTML
+            = "<i class=\"fa-regular fa-fw fa-circle\"></i>";
+    } else {
+        pastGameSelectorEl.querySelector("#next-month").classList.add("interactive-icon")
+        pastGameSelectorEl.querySelector("#next-month").innerHTML
+            = "<i class=\"fa-solid fa-fw fa-circle-arrow-right\"></i>";
+    }
+
+    const firstDay = clock.getFirstDayOfTheMonth(date);
+    const daysInMonth = clock.getNumberOfDaysInMonth(date);
+    const rows = Math.ceil((firstDay + daysInMonth) / 7);
+
+    document.getElementById("calendar").innerHTML = "";
+
+    for (let i = 0; i < rows; i++) {
+        let rowEl = document.createElement("div")
+        rowEl.classList.add("btn-group");
+        if (i === 0) {
+            rowEl.classList.add("btn-group-first");
+        }
+
+        for (let j = 0; j < 7; j++) {
+            let dateOfMonth = ((i * 7) + j) - firstDay + 1;
+            let ymdDate = date.getUTCFullYear()
+                + "-" + (date.getUTCMonth() + 1).toString().padStart(2, "0")
+                + "-" + dateOfMonth.toString().padStart(2, "0");
+            let btnElContainer = document.createElement("div");
+
+            if ((i === 0 && j < firstDay) || dateOfMonth > daysInMonth) {
+                btnElContainer.innerHTML
+                    = "<a class=\"btn btn-outline-dark disabled\" style=\"color: white;\">"
+                    + "00"
+                    + "</a>";
+            } else if (clock.isInTheFuture(ymdDate)) {
+                btnElContainer.innerHTML
+                    = "<a class=\"btn btn-outline-dark disabled\">"
+                    + dateOfMonth.toString().padStart(2, "0")
+                    + "</a>";
+            } else {
+                btnElContainer.innerHTML
+                    = "<a href=\"?date="
+                    + ymdDate
+                    + "\" class=\"btn btn-outline-dark\">"
+                    + dateOfMonth.toString().padStart(2, "0")
+                    + "</a>";
+            }
+            rowEl.append(btnElContainer.firstChild);
+        }
+
+        document.getElementById("calendar").append(rowEl);
+    }
 }
