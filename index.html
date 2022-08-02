@@ -47,7 +47,7 @@
             font-size: 3rem;
         }
 
-        .help {
+        .interactive-icon {
             cursor: pointer;
         }
 
@@ -92,6 +92,26 @@
         .solution {
             margin-top: 1rem;
         }
+
+        #past .modal-body {
+            text-align: center;
+        }
+
+        #past .btn-group {
+            font-variant: tabular-nums;
+        }
+
+        #past .btn-group .btn {
+            border-radius: 0;
+        }
+
+        #past .btn-group .btn {
+            border-top-width: 0;
+        }
+
+        #past .btn-group.btn-group-first .btn {
+            border-top-width: 1px;
+        }
     </style>
 
 </head>
@@ -99,9 +119,9 @@
 
 <div class="container" style="padding-bottom: 5rem;">
     <header class="d-flex justify-content-between align-items-center">
-        <div><i class="fa-solid fa-circle"></i></div>
+        <div class="interactive-icon" data-bs-toggle="modal" data-bs-target="#past"><i class="fa-solid fa-fw fa-calendar"></i></div>
         <h1>Ensemble</h1>
-        <div class="help" data-bs-toggle="modal" data-bs-target="#help"><i class="fa-solid fa-circle-question"></i></div>
+        <div class="interactive-icon" data-bs-toggle="modal" data-bs-target="#help"><i class="fa-solid fa-fw fa-circle-question"></i></div>
     </header>
 
     <form id="form">
@@ -224,6 +244,32 @@
     </ol>
 </div>
 
+<div class="modal fade" id="past" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Past Games</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-baseline" style="max-width: 16rem; margin: 0 auto 0.5rem;">
+                    <div id="last-month" class="interactive-icon" style="margin-right: 1rem;">
+                        <i class="fa-solid fa-fw fa-circle-arrow-left"></i>
+                    </div>
+                    <h6></h6>
+                    <div id="next-month" class="interactive-icon" style="margin-left: 1rem;">
+                        <i class="fa-regular fa-fw fa-circle"></i>
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="help" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -238,7 +284,7 @@
                 <p>A new ensemble will be cast every day.</p>
             </div>
             <div class="modal-footer">
-                <div style="font-size: 0.75rem;">Ensemble v1.0.2</div>
+                <div style="font-size: 0.75rem;">Ensemble v1.1.0</div>
                 <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
