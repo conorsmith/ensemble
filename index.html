@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ensemble</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -26,75 +27,75 @@
         gtag('config', 'G-L8S1JR65Y7');
     </script>
 
+    <style>
+        body {
+            font-family: 'Fira Sans', sans-serif;
+        }
+
+        .container {
+            max-width: 24rem;
+        }
+
+        header {
+            margin-top: 2rem;
+        }
+
+        h1 {
+            font-family: 'Arima Madurai', sans-serif;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 3rem;
+        }
+
+        .help {
+            cursor: pointer;
+        }
+
+        #counter {
+            margin-top: 0.8rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        #actors {
+            margin-top: 1.2rem;
+        }
+
+        #films {
+            margin-top: 2rem;
+        }
+
+        #actors li, #films li {
+            background: #fafafd;
+        }
+
+        .fade-out {
+            background-image: linear-gradient(to bottom, transparent, white);
+            margin-top: -3rem;
+            height: 3rem;
+            z-index: 10;
+        }
+
+        #win .card-body:first-child {
+            text-align: center;
+        }
+
+        #win-counter {
+            font-weight: bold;
+        }
+
+        .guess-info {
+            min-width: 3rem;
+        }
+
+        .solution {
+            margin-top: 1rem;
+        }
+    </style>
+
 </head>
 <body>
-
-<style>
-    body {
-        font-family: 'Fira Sans', sans-serif;
-    }
-
-    .container {
-        max-width: 24rem;
-    }
-
-    header {
-        margin-top: 2rem;
-    }
-
-    h1 {
-        font-family: 'Arima Madurai', sans-serif;
-        text-align: center;
-        text-transform: uppercase;
-        font-size: 3rem;
-    }
-
-    .help {
-        cursor: pointer;
-    }
-
-    #counter {
-        margin-top: 0.8rem;
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.4rem;
-    }
-
-    #actors {
-        margin-top: 1.2rem;
-    }
-
-    #films {
-        margin-top: 2rem;
-    }
-
-    #actors li, #films li {
-        background: #fafafd;
-    }
-
-    .fade-out {
-        background-image: linear-gradient(to bottom, transparent, white);
-        margin-top: -3rem;
-        height: 3rem;
-        z-index: 10;
-    }
-
-    #win .card-body:first-child {
-        text-align: center;
-    }
-
-    #win-counter {
-        font-weight: bold;
-    }
-
-    .guess-info {
-        min-width: 3rem;
-    }
-
-    .solution {
-        margin-top: 1rem;
-    }
-</style>
 
 <div class="container" style="padding-bottom: 5rem;">
     <header class="d-flex justify-content-between align-items-center">
@@ -237,7 +238,7 @@
                 <p>A new ensemble will be cast every day.</p>
             </div>
             <div class="modal-footer">
-                <div style="font-size: 0.75rem;">Ensemble v1.0</div>
+                <div style="font-size: 0.75rem;">Ensemble v1.0.1</div>
                 <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
